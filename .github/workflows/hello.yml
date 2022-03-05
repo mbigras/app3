@@ -4,15 +4,9 @@ on:
 jobs:
   hello:
     runs-on: ubuntu-latest
+    strategy: fail-fast
     steps:
       - uses: actions/checkout@v2
-      - run: echo hello world
-      - run: whoami
-      - run: pwd
-      - run: ls
-      - run: cat /etc/os-release
-      - run: env
-      - run: docker version
       - run: docker build -t foo .
       - run: docker run --rm --name foo -d -p 8080:8080 -e PORT=8080 foo
       - run: go build fetch.go

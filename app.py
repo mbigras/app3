@@ -15,7 +15,6 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 @app.route("/")
 def up():
     request_time = arrow.utcnow()
-    uptime = request_time - app.config["start_time"]
     return flask.jsonify(
         app=app.config["app"],
         version=app.config["version"],
@@ -23,7 +22,7 @@ def up():
         env=app.config["env"],
         build_time=app.config["build_time"].format(arrow.FORMAT_RFC3339),
         start_time=app.config["start_time"].format(arrow.FORMAT_RFC3339),
+        start_time_human=app.config["start_time"].humanize(),
         request_time=request_time.format(arrow.FORMAT_RFC3339),
-        uptime=str(uptime),
         message="hello world!",
     )

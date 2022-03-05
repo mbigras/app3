@@ -1,3 +1,5 @@
+import os
+
 import flask
 
 app = flask.Flask(__name__)
@@ -8,4 +10,10 @@ app.config["env"] = os.environ.get("ENV", "prod")
 
 @app.route("/")
 def up():
-    return "hello world\n"
+    return flask.jsonify(
+        app=app.config["app"],
+        version=app.config["version"],
+        commit=app.config["commit"],
+        env=app.config["env"],
+        message="hello world!",
+    )

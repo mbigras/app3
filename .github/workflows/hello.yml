@@ -8,7 +8,7 @@ jobs:
       fail-fast: true
     steps:
       - uses: actions/checkout@v2
-      - run: docker build -t foo --build-arg=APP=app3 --build-arg=APP=app3 --build-arg=VERSION=$GITHUB_RUN_NUMBER --build-arg=COMMIT=$GITHUB_SHA --build-arg=ENV=prod .
+      - run: docker build -t foo --build-arg=APP="app3"  --build-arg=VERSION="$GITHUB_RUN_NUMBER" --build-arg=COMMIT="$GITHUB_SHA" --build-arg=BUILD_TIME="$(./utcnow.sh)" --build-arg=ENV="prod" .
       - run: docker run --rm --name foo -d -p 8080:8080 -e PORT=8080 -e ENV=test foo
       - run: go run fetch.go http://localhost:8080/
       - run: docker stop foo

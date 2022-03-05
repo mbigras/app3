@@ -11,5 +11,5 @@ jobs:
       - run: docker build -t foo .
       - run: docker run --rm --name foo -d -p 8080:8080 -e PORT=8080 foo
       - run: go build fetch.go
-      - run: ./fetch http://localhost:8080/
+      - run: ./fetch http://localhost:8081/
       - run: docker stop foo

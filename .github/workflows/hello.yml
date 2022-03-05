@@ -13,3 +13,7 @@ jobs:
       - run: cat /etc/os-release
       - run: env
       - run: docker version
+      - run: docker build -t foo .
+      - run: docker run --rm --name foo -d -p 8080:8080 -e PORT=8080 foo
+      - run: curl localhost:8080
+      - run: docker stop foo

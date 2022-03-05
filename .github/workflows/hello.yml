@@ -8,15 +8,38 @@ jobs:
       fail-fast: true
     steps:
       - uses: actions/checkout@v2
-      - run: docker build -t foo --build-arg=APP="app3"  --build-arg=VERSION="$GITHUB_RUN_NUMBER" --build-arg=COMMIT="$GITHUB_SHA" --build-arg=BUILD_TIME="$(./utcnow.sh)" --build-arg=ENV="prod" .
-      - run: docker run --rm --name foo -d -p 8080:8080 -e PORT=8080 -e ENV=test foo
+      - run: |
+          docker build \
+                  --tag foo \
+                  --build-arg APP="app3"  \
+                  --build-arg VERSION="$GITHUB_RUN_NUMBER" \
+                  --build-arg COMMIT="$GITHUB_SHA" \
+                  --build-arg BUILD_TIME="$(./utcnow.sh)" \
+                  --build-arg ENV="prod" \
+                  .
+      - run: |
+          docker run \
+                  --rm \
+                  --name foo \
+                  --detach \
+                  --publish 8080:8080 \
+                  --env PORT=8080 \
+                  --env ENV=test \
+                  foo
       - run: go run fetch.go http://localhost:8080/
       - run: docker stop foo
       - run: docker tag foo mbigras/app3:$GITHUB_RUN_NUMBER
       - run: docker tag foo mbigras/app3:latest
-      - name: Authenticate to DockerHub
-        uses: docker/login-action@v1
+      - uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - run: docker push --all-tags mbigras/app3
+      - run: docker tag foo us-east1-docker.pkg.dev/playfulpanda/app3/app3:$GITHUB_RUN_NUMBER
+      - run: docker tag foo us-east1-docker.pkg.dev/playfulpanda/app3/app3:latest
+      - uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+      - uses: google-github-actions/setup-gcloud@v0
+      - run: gcloud auth configure-docker us-east1-docker.pkg.dev --quiet
+      - run: docker push --all-tags us-east1-docker.pkg.dev/playfulpanda/app3/app3

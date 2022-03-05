@@ -13,7 +13,8 @@ jobs:
       - run: go build fetch.go
       - run: ./fetch http://localhost:8080/
       - run: docker stop foo
-      - run: docker tag foo mbigras/app3:$GITHUB_RUN_NUMBER mbigras/app3:latest
+      - run: docker tag foo mbigras/app3:$GITHUB_RUN_NUMBER
+      - run: docker tag foo mbigras/app3:latest
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:

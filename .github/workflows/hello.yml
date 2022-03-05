@@ -4,7 +4,8 @@ on:
 jobs:
   hello:
     runs-on: ubuntu-latest
-    strategy: fail-fast
+    strategy:
+      fail-fast: true
     steps:
       - uses: actions/checkout@v2
       - run: docker build -t foo .

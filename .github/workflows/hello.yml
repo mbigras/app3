@@ -1,0 +1,23 @@
+name: hello
+on:
+- push
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker build -t foo --build-arg=APP=app3 --build-arg=APP=app3 --build-arg=VERSION=$GITHUB_RUN_NUMBER --build-arg=COMMIT=$GITHUB_SHA --build-arg=ENV=prod .
+      - run: docker run --rm --name foo -d -p 8080:8080 -e PORT=8080 foo
+      - run: go build fetch.go
+      - run: ./fetch http://localhost:8080/
+      - run: docker stop foo
+      - run: docker tag foo mbigras/app3:$GITHUB_RUN_NUMBER
+      - run: docker tag foo mbigras/app3:latest
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - run: docker push --all-tags mbigras/app3

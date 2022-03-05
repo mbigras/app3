@@ -11,5 +11,7 @@ jobs:
       - run: docker build -t foo .
       - run: docker run --rm --name foo -d -p 8080:8080 -e PORT=8080 foo
       - run: go build fetch.go
-      - run: ./fetch http://localhost:8081/
+      - run: ./fetch http://localhost:8080/
       - run: docker stop foo
+      - run: docker tag foo mbigras/app3:latest
+      - run: docker push mbigras/app3:latest

@@ -10,6 +10,9 @@ app.config["commit"] = os.environ.get("COMMIT", "00e8872b526c45e6272216ca57be60c
 app.config["build_time"] = arrow.get(os.environ.get("BUILD_TIME", "2022-03-05 19:12:07+00:00")).to("utc")
 app.config["start_time"] = arrow.utcnow()
 app.config["env"] = os.environ.get("ENV", "prod")
+app.config["features"] = [
+    "feature1",
+]
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
 @app.route("/")
@@ -25,4 +28,5 @@ def up():
         start_time_human=app.config["start_time"].humanize(),
         request_time=request_time.format(arrow.FORMAT_RFC3339),
         message="hello world!",
+        features=app.config["features"],
     )
